@@ -1,8 +1,13 @@
+import ChatRoom from '@/pages/ChatRoom';
+import Home from '@/pages/Home';
+import Register from '@/pages/Register';
 import { JSX } from 'react';
-import ChatRoom from '../pages/ChatRoom';
-import Home from '../pages/Home';
 
 export const routes = [
+  {
+    path: '/register',
+    Component: Register,
+  },
   {
     path: '/home',
     Component: Home,
