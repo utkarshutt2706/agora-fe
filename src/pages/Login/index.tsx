@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { API_ENDPOINTS } from '@/lib/constants';
 import axios from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
@@ -10,28 +11,26 @@ function Login() {
   );
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [userDetails, setUserDetails] = useState({ email: '', password: '' });
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
+  };
+
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isLoading) {
       return;
     }
-    setIsLoading(true);
-    console.log('Login submitted');
-    axios
-      .post(`${import.meta.env.VITE_BE_URL}user/login`, {
-        email: 'test@example.com',
-        password: 'secret123',
-      })
-      .then((response) => {
-        setUser(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    try {
+      setIsLoading(true);
+      const response = await axios.post(`${API_ENDPOINTS.login}`, userDetails);
+      setUser(response.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleRegisterRedirect = () => {
@@ -58,12 +57,13 @@ function Login() {
                 Email
               </label>
               <input
+                id='email'
                 type='email'
-                id='email2'
                 name='email'
                 placeholder='you@example.com'
-                required
                 className='w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400'
+                required
+                onChange={handleInputChange}
               />
             </div>
 
@@ -76,11 +76,12 @@ function Login() {
               </label>
               <input
                 type={showPassword ? 'text' : 'password'}
-                id='password2'
+                id='password'
                 name='password'
                 placeholder='••••••••'
-                required
                 className='w-full px-4 py-2 pr-10 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400'
+                required
+                onChange={handleInputChange}
               />
               <button
                 type='button'
