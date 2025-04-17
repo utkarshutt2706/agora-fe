@@ -1,20 +1,25 @@
 import { Button } from '@/components/ui/button';
+import { BaseResponse, LoginRequestDto, LoginResponseDto } from '@/dto';
 import { API_ENDPOINTS } from '@/lib/constants';
+import { setUserDetails } from '@/lib/storage';
 import axios from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import spinner from '../../assets/spinner.svg';
 
 function Login() {
-  const [, setUser] = useState(
-    null as { _id: string; fullName: string } | null
-  );
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [userDetails, setUserDetails] = useState({ email: '', password: '' });
+  const [loginFormDetails, setLoginFormDetails] = useState({
+    email: '',
+    password: '',
+  } as LoginRequestDto);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUserDetails({ ...userDetails, [e.target.name]: e.target.value });
+    setLoginFormDetails({
+      ...loginFormDetails,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -24,8 +29,13 @@ function Login() {
     }
     try {
       setIsLoading(true);
-      const response = await axios.post(`${API_ENDPOINTS.login}`, userDetails);
-      setUser(response.data);
+      const response = await axios.post<
+        LoginRequestDto,
+        BaseResponse<LoginResponseDto>
+      >(`${API_ENDPOINTS.login}`, loginFormDetails);
+      if (response && response.data) {
+        setUserDetails(response.data);
+      }
     } catch (error) {
       console.log(error);
     } finally {
