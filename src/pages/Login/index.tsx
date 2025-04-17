@@ -1,3 +1,4 @@
+import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
@@ -91,7 +92,7 @@ function Login() {
               </button>
             </div>
 
-            <button
+            <Button
               type='submit'
               className={`relative w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition min-h-10 ${
                 isLoading ? 'cursor-progress' : 'cursor-pointer'
@@ -104,19 +105,19 @@ function Login() {
                 />
               )}
               {!isLoading && 'Login'}
-            </button>
+            </Button>
           </form>
 
           <div className='mt-6 text-center'>
             <span className='text-gray-600 mb-2 mr-2'>
               Don’t have an account?
             </span>
-            <button
+            <Button
               onClick={handleRegisterRedirect}
-              className='text-indigo-600 font-medium hover:underline hover:text-indigo-800 cursor-pointer'
+              className='bg-transparent hover:bg-transparent text-indigo-600 font-medium hover:underline hover:text-indigo-800 cursor-pointer'
             >
               Register Now
-            </button>
+            </Button>
           </div>
         </div>
       </div>
