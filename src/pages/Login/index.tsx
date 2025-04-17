@@ -1,17 +1,42 @@
+import axios from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
+import spinner from '../../assets/spinner.svg';
 
 function Login() {
+  const [, setUser] = useState(
+    null as { _id: string; fullName: string } | null
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isLoading) {
+      return;
+    }
+    setIsLoading(true);
     console.log('Login submitted');
+    axios
+      .post(`${import.meta.env.VITE_BE_URL}user/login`, {
+        email: 'test@example.com',
+        password: 'secret123',
+      })
+      .then((response) => {
+        setUser(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const handleRegisterRedirect = () => {
     console.log('navigate to registration');
   };
 
-  const [showPassword, setShowPassword] = useState(false);
   return (
     <>
       <div className='min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-indigo-200'>
@@ -33,7 +58,7 @@ function Login() {
               </label>
               <input
                 type='email'
-                id='email'
+                id='email2'
                 name='email'
                 placeholder='you@example.com'
                 required
@@ -50,7 +75,7 @@ function Login() {
               </label>
               <input
                 type={showPassword ? 'text' : 'password'}
-                id='password'
+                id='password2'
                 name='password'
                 placeholder='••••••••'
                 required
@@ -68,9 +93,17 @@ function Login() {
 
             <button
               type='submit'
-              className='w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition cursor-pointer'
+              className={`relative w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition min-h-10 ${
+                isLoading ? 'cursor-progress' : 'cursor-pointer'
+              }`}
             >
-              Login
+              {isLoading && (
+                <img
+                  src={spinner}
+                  className='absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2'
+                />
+              )}
+              {!isLoading && 'Login'}
             </button>
           </form>
 
