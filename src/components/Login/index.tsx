@@ -75,7 +75,9 @@ function Login() {
           </form>
 
           <div className='mt-6 text-center'>
-            <p className='text-gray-600 mb-2'>Don’t have an account?</p>
+            <span className='text-gray-600 mb-2 mr-2'>
+              Don’t have an account?
+            </span>
             <button
               onClick={handleRegisterRedirect}
               className='text-indigo-600 font-medium hover:underline hover:text-indigo-800 cursor-pointer'
