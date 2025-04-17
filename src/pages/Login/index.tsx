@@ -5,9 +5,11 @@ import { setUserDetails } from '@/lib/storage';
 import axios from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import spinner from '../../assets/spinner.svg';
 
 function Login() {
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loginFormDetails, setLoginFormDetails] = useState({
@@ -35,6 +37,7 @@ function Login() {
       >(`${API_ENDPOINTS.login}`, loginFormDetails);
       if (response && response.data) {
         setUserDetails(response.data);
+        navigate('/home');
       }
     } catch (error) {
       console.log(error);
@@ -44,7 +47,7 @@ function Login() {
   };
 
   const handleRegisterRedirect = () => {
-    console.log('navigate to registration');
+    navigate('/register');
   };
 
   return (
