@@ -4,3 +4,7 @@ export const API_ENDPOINTS = {
   login: `${BASE_URL}user/login`,
   register: `${BASE_URL}user/register`,
 };
+
+export const LOCAL_STORAGE_KEYS = {
+  userData: 'USER_DATA',
+};
