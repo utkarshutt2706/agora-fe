@@ -1,12 +1,40 @@
+import { BaseResponse, Chat } from '@/dto';
+import { API_ENDPOINTS } from '@/lib/constants';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 function ChatRoom() {
   const params = useParams();
-  console.log(params);
+  const [chats, setChats] = useState([] as Chat[]);
+
+  useEffect(() => {
+    if (params.roomId) getAllChats(params.roomId);
+  }, [params.roomId]);
+
+  const getAllChats = async (roomId: string) => {
+    try {
+      const response = await axios.get<void, BaseResponse<Chat[]>>(
+        `${API_ENDPOINTS.getChatsByRoomId}${roomId}`
+      );
+      if (response && response.data) {
+        setChats(response.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
-      <p>ChatRoom</p>
+      <ul>
+        {chats.map((chat) => (
+          <li key={chat._id}>
+            <p>{chat.title}</p>
+            <p>{chat.body}</p>
+          </li>
+        ))}
+      </ul>
     </>
   );
 }
