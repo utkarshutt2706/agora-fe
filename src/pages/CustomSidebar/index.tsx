@@ -22,7 +22,7 @@ function CustomSidebar({
 }) {
   return (
     <>
-      <Sidebar collapsible='offcanvas'>
+      <Sidebar collapsible='icon'>
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
