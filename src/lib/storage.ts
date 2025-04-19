@@ -8,8 +8,9 @@ const setDataToLocalStorage = (
   localStorage.setItem(key, JSON.stringify(value));
 };
 
-const getDataFromLocalStorage = (key: string) => {
-  return localStorage.getItem(key);
+const getDataFromLocalStorage = <T>(key: string): T | null => {
+  const item = localStorage.getItem(key);
+  return item ? (JSON.parse(item) as T) : null;
 };
 
 export const setUserDetails = (userData: User) => {
@@ -17,5 +18,5 @@ export const setUserDetails = (userData: User) => {
 };
 
 export const getUserDetails = () => {
-  getDataFromLocalStorage(LOCAL_STORAGE_KEYS.userData);
+  return getDataFromLocalStorage<User>(LOCAL_STORAGE_KEYS.userData);
 };

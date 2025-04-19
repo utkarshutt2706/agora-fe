@@ -1,3 +1,4 @@
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   Sidebar,
   SidebarContent,
@@ -11,7 +12,14 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { Room } from '@/dto';
-import { MessageCircleCode, MessageCircleMore } from 'lucide-react';
+import { User } from '@/interfaces';
+import { getUserDetails } from '@/lib/storage';
+import {
+  MessageCircleCode,
+  MessageCircleMore,
+  MoreVerticalIcon,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 function CustomSidebar({
   rooms,
@@ -20,6 +28,31 @@ function CustomSidebar({
   rooms: Room[];
   handleSelectRoom: (room: Room) => void;
 }) {
+  const [user, setUser] = useState(null as User | null);
+  const [initials, setInitials] = useState('');
+
+  useEffect(() => {
+    setUser(getUserDetails());
+  }, []);
+
+  useEffect(() => {
+    if (user) setUserNameInitials(user);
+  }, [user]);
+
+  const setUserNameInitials = (userObj: User) => {
+    const name = userObj.fullName;
+    if (!name) return '';
+
+    const words = name.trim().split(/\s+/);
+    if (words.length === 1) {
+      setInitials(words[0][0].toUpperCase());
+    }
+
+    setInitials(
+      words[0][0].toUpperCase() + words[words.length - 1][0].toUpperCase()
+    );
+  };
+
   return (
     <>
       <Sidebar collapsible='icon'>
@@ -59,7 +92,31 @@ function CustomSidebar({
           <SidebarGroup />
         </SidebarContent>
         <SidebarFooter>
-          <span>User name</span>
+          {user && (
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  size='lg'
+                  className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer'
+                >
+                  <Avatar className='h-8 w-8 rounded-lg grayscale'>
+                    <AvatarFallback className='rounded-lg'>
+                      {initials}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className='grid flex-1 text-left text-sm leading-tight'>
+                    <span className='truncate font-medium'>
+                      {user.fullName}
+                    </span>
+                    <span className='truncate text-xs text-muted-foreground'>
+                      {user.email}
+                    </span>
+                  </div>
+                  <MoreVerticalIcon className='ml-auto size-4' />
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          )}
         </SidebarFooter>
       </Sidebar>
     </>
