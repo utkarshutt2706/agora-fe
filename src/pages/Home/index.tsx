@@ -1,4 +1,4 @@
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { BaseResponse, Room } from '@/dto';
 import { API_ENDPOINTS } from '@/lib/constants';
 import axios from 'axios';
@@ -53,9 +53,11 @@ function Home() {
           rooms={rooms}
           handleSelectRoom={handleSelectRoom}
         ></CustomSidebar>
-        <CustomHeader selectedRoom={selectedRoom}></CustomHeader>
+        <SidebarInset>
+          <CustomHeader selectedRoom={selectedRoom}></CustomHeader>
+          <Outlet></Outlet>
+        </SidebarInset>
       </SidebarProvider>
-      <Outlet></Outlet>
     </>
   );
 }
