@@ -6,4 +6,10 @@ export interface LoginRequestDto {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface LoginResponseDto extends User {}
+export interface LoginResponseDto {
+  authToken: string;
+}
+
+export interface LoginResponseWithUserDto extends LoginResponseDto {
+  user: User;
+}

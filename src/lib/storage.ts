@@ -1,4 +1,4 @@
-import { User } from '@/interfaces';
+import { LoginResponseWithUserDto } from '@/dto';
 import { LOCAL_STORAGE_KEYS } from './constants';
 
 const setDataToStorage = (
@@ -28,10 +28,13 @@ const getDataFromStorage = <T>(
   return item ? (JSON.parse(item) as T) : null;
 };
 
-export const setUserDetails = (userData: User) => {
+export const setUserDetails = (userData: LoginResponseWithUserDto) => {
   setDataToStorage(LOCAL_STORAGE_KEYS.userData, userData, 'session');
 };
 
 export const getUserDetails = () => {
-  return getDataFromStorage<User>(LOCAL_STORAGE_KEYS.userData, 'session');
+  return getDataFromStorage<LoginResponseWithUserDto>(
+    LOCAL_STORAGE_KEYS.userData,
+    'session'
+  );
 };

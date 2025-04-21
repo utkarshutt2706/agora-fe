@@ -8,9 +8,11 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { BaseResponse, LoginRequestDto, LoginResponseDto } from '@/dto';
+import { User } from '@/interfaces';
 import { API_ENDPOINTS } from '@/lib/constants';
 import { setUserDetails } from '@/lib/storage';
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -44,7 +46,13 @@ function Login() {
         BaseResponse<LoginResponseDto>
       >(`${API_ENDPOINTS.login}`, loginFormDetails);
       if (response && response.data) {
-        setUserDetails(response.data);
+        const decodedToken = jwtDecode<{ iat: number; sub: User }>(
+          response.data.authToken
+        );
+        setUserDetails({
+          authToken: response.data.authToken,
+          user: decodedToken.sub,
+        });
         navigate('/home');
       }
     } catch (error) {
