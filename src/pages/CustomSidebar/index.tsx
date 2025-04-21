@@ -11,15 +11,15 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { AuthContext } from '@/contexts/AuthContext';
 import { Room } from '@/dto';
 import { User } from '@/interfaces';
-import { getUserDetails } from '@/lib/storage';
 import {
   MessageCircleCode,
   MessageCircleMore,
   MoreVerticalIcon,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 function CustomSidebar({
   rooms,
@@ -28,16 +28,12 @@ function CustomSidebar({
   rooms: Room[];
   handleSelectRoom: (room: Room) => void;
 }) {
-  const [user, setUser] = useState(null as User | null);
+  const authData = useContext(AuthContext);
   const [initials, setInitials] = useState('');
 
   useEffect(() => {
-    setUser(getUserDetails());
-  }, []);
-
-  useEffect(() => {
-    if (user) setUserNameInitials(user);
-  }, [user]);
+    if (authData && authData.user) setUserNameInitials(authData.user);
+  }, [authData]);
 
   const setUserNameInitials = (userObj: User) => {
     const name = userObj.fullName;
@@ -92,7 +88,7 @@ function CustomSidebar({
           <SidebarGroup />
         </SidebarContent>
         <SidebarFooter>
-          {user && (
+          {authData && authData.user && (
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
@@ -106,10 +102,10 @@ function CustomSidebar({
                   </Avatar>
                   <div className='grid flex-1 text-left text-sm leading-tight'>
                     <span className='truncate font-medium'>
-                      {user.fullName}
+                      {authData.user.fullName}
                     </span>
                     <span className='truncate text-xs text-muted-foreground'>
-                      {user.email}
+                      {authData.user.email}
                     </span>
                   </div>
                   <MoreVerticalIcon className='ml-auto size-4' />
