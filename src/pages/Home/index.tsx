@@ -1,3 +1,5 @@
+import CustomHeader from '@/components/custom/CustomHeader';
+import CustomSidebar from '@/components/custom/CustomSidebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Room } from '@/dto';
 import { axiosGet } from '@/lib/axios';
@@ -5,8 +7,6 @@ import { API_ENDPOINTS } from '@/lib/constants';
 import { ROUTES } from '@/routes';
 import { useEffect, useState } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
-import CustomHeader from '../CustomHeader';
-import CustomSidebar from '../CustomSidebar';
 
 function Home() {
   const navigate = useNavigate();
