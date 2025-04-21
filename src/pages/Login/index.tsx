@@ -7,11 +7,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { BaseResponse, LoginRequestDto, LoginResponseDto } from '@/dto';
+import { LoginRequestDto, LoginResponseDto } from '@/dto';
 import { User } from '@/interfaces';
+import { axiosPost } from '@/lib/axios';
 import { API_ENDPOINTS } from '@/lib/constants';
 import { setAuthToken, setUserDetails } from '@/lib/storage';
-import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
@@ -41,15 +41,15 @@ function Login() {
     }
     try {
       setIsLoading(true);
-      const response = await axios.post<
-        LoginRequestDto,
-        BaseResponse<LoginResponseDto>
-      >(`${API_ENDPOINTS.login}`, loginFormDetails);
-      if (response && response.data) {
+      const response = await axiosPost<LoginRequestDto, LoginResponseDto>(
+        `${API_ENDPOINTS.login}`,
+        loginFormDetails
+      );
+      if (response && response.authToken) {
         const decodedToken = jwtDecode<{ iat: number; sub: User }>(
-          response.data.authToken
+          response.authToken
         );
-        setAuthToken(response.data.authToken);
+        setAuthToken(response.authToken);
         setUserDetails(decodedToken.sub);
         navigate('/home');
       }

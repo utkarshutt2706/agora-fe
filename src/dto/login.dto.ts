@@ -5,7 +5,6 @@ export interface LoginRequestDto {
   password: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface LoginResponseDto {
   authToken: string;
 }

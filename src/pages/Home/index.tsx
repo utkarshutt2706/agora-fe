@@ -1,7 +1,7 @@
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
-import { BaseResponse, Room } from '@/dto';
+import { Room } from '@/dto';
+import { axiosGet } from '@/lib/axios';
 import { API_ENDPOINTS } from '@/lib/constants';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import CustomHeader from '../CustomHeader';
@@ -30,11 +30,11 @@ function Home() {
 
   const getAllRooms = async () => {
     try {
-      const response = await axios.get<void, BaseResponse<Room[]>>(
-        `${API_ENDPOINTS.getAllRooms}`
-      );
-      if (response && response.data) {
-        setRooms(response.data);
+      const response = await axiosGet<Room[]>(`${API_ENDPOINTS.getAllRooms}`);
+      if (response && response.length) {
+        setRooms(response);
+      } else {
+        setRooms([]);
       }
     } catch (error) {
       console.log(error);

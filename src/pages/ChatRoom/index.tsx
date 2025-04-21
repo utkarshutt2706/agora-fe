@@ -1,6 +1,6 @@
-import { BaseResponse, Chat } from '@/dto';
+import { Chat } from '@/dto';
+import { axiosGet } from '@/lib/axios';
 import { API_ENDPOINTS } from '@/lib/constants';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -14,11 +14,13 @@ function ChatRoom() {
 
   const getAllChats = async (roomId: string) => {
     try {
-      const response = await axios.get<void, BaseResponse<Chat[]>>(
+      const response = await axiosGet<Chat[]>(
         `${API_ENDPOINTS.getChatsByRoomId}${roomId}`
       );
-      if (response && response.data) {
-        setChats(response.data);
+      if (response && response.length) {
+        setChats(response);
+      } else {
+        setChats([]);
       }
     } catch (error) {
       console.log(error);

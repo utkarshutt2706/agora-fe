@@ -7,9 +7,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { BaseResponse, RegisterRequestDto, RegisterResponseDto } from '@/dto';
+import { RegisterRequestDto, RegisterResponseDto } from '@/dto';
+import { axiosPost } from '@/lib/axios';
 import { API_ENDPOINTS } from '@/lib/constants';
-import axios from 'axios';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -73,17 +73,16 @@ function Register() {
 
     try {
       setIsLoading(true);
-      const response = await axios.post<
-        RegisterRequestDto,
-        BaseResponse<RegisterResponseDto>
-      >(`${API_ENDPOINTS.register}`, {
-        ...requestData,
-        password,
-      });
-      if (response && response.data && response.data.userId) {
+      const response = await axiosPost<RegisterRequestDto, RegisterResponseDto>(
+        `${API_ENDPOINTS.register}`,
+        {
+          ...requestData,
+          password,
+        }
+      );
+      if (response && response.userId) {
         handleLoginRedirect();
       }
-      // Navigate to login or home if needed
     } catch (error) {
       console.error('Registration failed:', error);
     } finally {
