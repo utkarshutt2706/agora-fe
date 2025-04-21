@@ -3,6 +3,13 @@ import Home from '@/pages/Home';
 import Register from '@/pages/Register';
 import { JSX } from 'react';
 
+export const ROUTES = {
+  login: '/',
+  register: '/register',
+  home: '/home',
+  chatRoom: '/home/chat/',
+};
+
 export const routes = [
   {
     path: '/register',

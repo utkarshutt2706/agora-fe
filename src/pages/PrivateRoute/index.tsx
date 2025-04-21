@@ -3,7 +3,7 @@ import { UserWithToken } from '@/interfaces';
 import { getAuthToken, getUserDetails } from '@/lib/storage';
 import { JSX, useEffect, useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-import { CustomRoute, routes } from '../../routes/index';
+import { CustomRoute, ROUTES, routes } from '../../routes/index';
 
 const renderRoute = (routes: CustomRoute[]): JSX.Element[] => {
   return routes.map((route): JSX.Element => {
@@ -27,7 +27,7 @@ function PrivateRoute() {
     if (user && authToken) {
       setAuthData({ user, authToken });
     } else {
-      navigate('/');
+      navigate(ROUTES.login);
     }
   }, [navigate]);
 

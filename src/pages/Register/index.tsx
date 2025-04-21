@@ -10,6 +10,7 @@ import {
 import { RegisterRequestDto, RegisterResponseDto } from '@/dto';
 import { axiosPost } from '@/lib/axios';
 import { API_ENDPOINTS } from '@/lib/constants';
+import { ROUTES } from '@/routes';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -57,7 +58,7 @@ function Register() {
     registerFormDetails.password !== registerFormDetails.confirmPassword;
 
   const handleLoginRedirect = () => {
-    navigate('/');
+    navigate(ROUTES.login);
   };
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {

@@ -12,6 +12,7 @@ import { User } from '@/interfaces';
 import { axiosPost } from '@/lib/axios';
 import { API_ENDPOINTS } from '@/lib/constants';
 import { setAuthToken, setUserDetails } from '@/lib/storage';
+import { ROUTES } from '@/routes';
 import { jwtDecode } from 'jwt-decode';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
@@ -51,7 +52,7 @@ function Login() {
         );
         setAuthToken(response.authToken);
         setUserDetails(decodedToken.sub);
-        navigate('/home');
+        navigate(ROUTES.home);
       }
     } catch (error) {
       console.log(error);
@@ -61,7 +62,7 @@ function Login() {
   };
 
   const handleRegisterRedirect = () => {
-    navigate('/register');
+    navigate(ROUTES.register);
   };
 
   return (
