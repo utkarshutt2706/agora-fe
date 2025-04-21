@@ -1,3 +1,6 @@
+import CustomChat from '@/components/custom/CustomChat';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Chat } from '@/dto';
 import { axiosGet } from '@/lib/axios';
 import { API_ENDPOINTS } from '@/lib/constants';
@@ -29,14 +32,25 @@ function ChatRoom() {
 
   return (
     <>
-      <ul>
-        {chats.map((chat) => (
-          <li key={chat._id}>
-            <p>{chat.title}</p>
-            <p>{chat.body}</p>
-          </li>
-        ))}
-      </ul>
+      <div
+        style={{ height: 'calc(100svh - 48px)' }}
+        className='flex flex-col justify-end px-4 py-4 lg:px-6'
+      >
+        <div className='flex flex-col-reverse overflow-y-auto'>
+          {chats && chats.length
+            ? chats.map((chat) => <CustomChat chat={chat} key={chat._id} />)
+            : null}
+        </div>
+        <div className='flex w-full items-center space-x-2'>
+          <Input type='text' placeholder='Type your message' className='h-12' />
+          <Button
+            type='submit'
+            className='h-12 lg:px-10 md:px-8 sm:px-6 xs:px-4'
+          >
+            Send
+          </Button>
+        </div>
+      </div>
     </>
   );
 }

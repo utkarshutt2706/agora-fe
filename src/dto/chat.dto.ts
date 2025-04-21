@@ -1,9 +1,11 @@
 export interface Chat {
   _id: string;
-  title: string;
   body: string;
-  author: string;
+  authorId: string;
+  authorName: string;
   roomId: string;
-  date: string;
+  createdAt: string;
+  updatedAt: string;
+  type: string;
   __v: number;
 }
