@@ -1,5 +1,8 @@
-import { JSX } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { AuthContext } from '@/contexts/AuthContext';
+import { UserWithToken } from '@/interfaces';
+import { getAuthToken, getUserDetails } from '@/lib/storage';
+import { JSX, useEffect, useState } from 'react';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import { CustomRoute, routes } from '../../routes/index';
 
 const renderRoute = (routes: CustomRoute[]): JSX.Element[] => {
@@ -15,9 +18,24 @@ const renderRoute = (routes: CustomRoute[]): JSX.Element[] => {
 };
 
 function PrivateRoute() {
+  const navigate = useNavigate();
+  const [authData, setAuthData] = useState(null as UserWithToken | null);
+
+  useEffect(() => {
+    const user = getUserDetails();
+    const authToken = getAuthToken();
+    if (user && authToken) {
+      setAuthData({ user, authToken });
+    } else {
+      navigate('/');
+    }
+  }, [navigate]);
+
   return (
     <>
-      <Routes>{renderRoute(routes)}</Routes>
+      <AuthContext.Provider value={authData}>
+        <Routes>{renderRoute(routes)}</Routes>
+      </AuthContext.Provider>
     </>
   );
 }

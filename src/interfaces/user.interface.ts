@@ -5,3 +5,8 @@ export interface User {
   createdAt: string;
   __v: number;
 }
+
+export interface UserWithToken {
+  user: User;
+  authToken: string;
+}

@@ -10,7 +10,7 @@ import {
 import { BaseResponse, LoginRequestDto, LoginResponseDto } from '@/dto';
 import { User } from '@/interfaces';
 import { API_ENDPOINTS } from '@/lib/constants';
-import { setUserDetails } from '@/lib/storage';
+import { setAuthToken, setUserDetails } from '@/lib/storage';
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { Eye, EyeOff } from 'lucide-react';
@@ -49,10 +49,8 @@ function Login() {
         const decodedToken = jwtDecode<{ iat: number; sub: User }>(
           response.data.authToken
         );
-        setUserDetails({
-          authToken: response.data.authToken,
-          user: decodedToken.sub,
-        });
+        setAuthToken(response.data.authToken);
+        setUserDetails(decodedToken.sub);
         navigate('/home');
       }
     } catch (error) {
