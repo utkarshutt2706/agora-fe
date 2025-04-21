@@ -20,6 +20,7 @@ import {
   MoreVerticalIcon,
 } from 'lucide-react';
 import { useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 function CustomSidebar({
   rooms,
@@ -28,12 +29,23 @@ function CustomSidebar({
   rooms: Room[];
   handleSelectRoom: (room: Room) => void;
 }) {
+  const params = useParams();
   const authData = useContext(AuthContext);
   const [initials, setInitials] = useState('');
+  const [selectedRoom, setSelectedRoom] = useState(null as Room | null);
 
   useEffect(() => {
     if (authData && authData.user) setUserNameInitials(authData.user);
   }, [authData]);
+
+  useEffect(() => {
+    if (params.roomId && rooms && rooms.length) {
+      const currentRoom = rooms.find((room) => room._id === params.roomId);
+      if (currentRoom) {
+        setSelectedRoom(currentRoom);
+      }
+    }
+  }, [rooms, params.roomId]);
 
   const setUserNameInitials = (userObj: User) => {
     const name = userObj.fullName;
@@ -47,6 +59,11 @@ function CustomSidebar({
     setInitials(
       words[0][0].toUpperCase() + words[words.length - 1][0].toUpperCase()
     );
+  };
+
+  const selectRoomHandler = (room: Room) => {
+    setSelectedRoom(room);
+    handleSelectRoom(room);
   };
 
   return (
@@ -72,10 +89,13 @@ function CustomSidebar({
             <SidebarMenu>
               {rooms.map((room) => (
                 <SidebarMenuItem key={room._id}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={room._id === selectedRoom?._id}
+                  >
                     <span
                       className='text-base px-[1.5rem] cursor-pointer'
-                      onClick={() => handleSelectRoom(room)}
+                      onClick={() => selectRoomHandler(room)}
                     >
                       <MessageCircleMore />
                       {room.name}
