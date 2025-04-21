@@ -10,7 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { AuthContext } from '@/contexts/AuthContext';
+import AuthContext from '@/contexts/AuthContext';
 import { Room } from '@/dto';
 import {
   MessageCircleCode,

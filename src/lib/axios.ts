@@ -2,7 +2,9 @@ import { BaseResponse } from '@/dto';
 import axios from 'axios';
 import { getAuthToken } from './storage';
 
-const BASE_URL = import.meta.env.VITE_BE_URL;
+const BASE_URL = `${import.meta.env.VITE_BE_URL}${
+  import.meta.env.VITE_BE_BASE_URL
+}`;
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL, // optional: set if all requests share a base URL

@@ -4,7 +4,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { AuthContext } from '@/contexts/AuthContext';
+import AuthContext from '@/contexts/AuthContext';
 import { Chat } from '@/dto';
 import { useContext } from 'react';
 

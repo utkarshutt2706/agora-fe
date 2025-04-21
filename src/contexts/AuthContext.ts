@@ -1,4 +1,6 @@
 import { UserWithToken } from '@/interfaces';
 import { createContext } from 'react';
 
-export const AuthContext = createContext<UserWithToken | null>(null);
+const AuthContext = createContext<UserWithToken | null>(null);
+
+export default AuthContext;

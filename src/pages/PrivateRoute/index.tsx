@@ -1,4 +1,4 @@
-import { AuthContext } from '@/contexts/AuthContext';
+import AuthContext from '@/contexts/AuthContext';
 import { UserWithToken } from '@/interfaces';
 import { getAuthToken, getUserDetails } from '@/lib/storage';
 import { JSX, useEffect, useState } from 'react';
