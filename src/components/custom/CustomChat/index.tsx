@@ -5,10 +5,10 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import AuthContext from '@/contexts/AuthContext';
-import { Chat } from '@/dto';
+import { ChatResponseDto } from '@/dto';
 import { useContext } from 'react';
 
-function CustomChat({ chat }: { chat: Chat }) {
+function CustomChat({ chat }: { chat: ChatResponseDto }) {
   const authData = useContext(AuthContext);
   return (
     <>
@@ -20,7 +20,7 @@ function CustomChat({ chat }: { chat: Chat }) {
       >
         <Card
           key={chat._id}
-          className={`lg:w-6/10 md:w-[500px] sm:w-[350px] xs:w-[250px] mb-8 ${
+          className={`w-[250px] lg:w-6/10 md:w-[500px] sm:w-[350px] mb-8 ${
             chat.authorId === authData?.user._id ? 'bg-neutral-200' : ''
           }`}
         >

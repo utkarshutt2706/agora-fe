@@ -3,9 +3,9 @@ import CustomSidebar from '@/components/custom/CustomSidebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import SocketContext from '@/contexts/SocketContext';
 import { Room } from '@/dto';
+import useSocket from '@/hooks/useSocket';
 import { axiosGet } from '@/lib/axios';
 import { API_ENDPOINTS } from '@/lib/constants';
-import socket from '@/lib/socket';
 import { ROUTES } from '@/routes';
 import { useEffect, useState } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
@@ -14,8 +14,10 @@ function Home() {
   const navigate = useNavigate();
   const params = useParams();
   const [rooms, setRooms] = useState([] as Room[]);
-  const [isConnected, setIsConnected] = useState(socket.connected);
+  const [isConnected, setIsConnected] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null as Room | null);
+
+  const socket = useSocket();
 
   useEffect(() => {
     getAllRooms();
@@ -33,24 +35,16 @@ function Home() {
   }, [rooms, params.roomId]);
 
   useEffect(() => {
-    function onConnect() {
+    if (!socket) return;
+
+    socket.on('connect', () => {
       setIsConnected(true);
-    }
+    });
 
-    function onDisconnect() {
+    socket.on('disconnect', () => {
       setIsConnected(false);
-    }
-
-    socket.on('connect', onConnect);
-    socket.on('disconnect', onDisconnect);
-
-    socket.connect();
-
-    return () => {
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
-    };
-  }, []);
+    });
+  }, [socket]);
 
   const getAllRooms = async () => {
     try {

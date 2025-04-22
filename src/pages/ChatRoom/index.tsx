@@ -2,16 +2,18 @@ import CustomChat from '@/components/custom/CustomChat';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import SocketContext from '@/contexts/SocketContext';
-import { Chat } from '@/dto';
+import { ChatRequestDto, ChatResponseDto } from '@/dto';
+import { ChatType } from '@/enums';
 import { axiosGet } from '@/lib/axios';
 import { API_ENDPOINTS } from '@/lib/constants';
+import { showErrorToast } from '@/lib/toast';
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 function ChatRoom() {
   const params = useParams();
-  const [chats, setChats] = useState([] as Chat[]);
   const [message, setMessage] = useState('');
+  const [chats, setChats] = useState([] as ChatResponseDto[]);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const socket = useContext(SocketContext);
 
@@ -27,12 +29,23 @@ function ChatRoom() {
   useEffect(() => {
     if (socket && params.roomId) {
       socket.emit('join_room', params.roomId);
+      socket.on('receive_message', onMessageReceive);
     }
+    return () => {
+      if (socket && params.roomId) {
+        socket.off();
+        socket.emit('leave_room', params.roomId);
+      }
+    };
   }, [socket, params.roomId]);
+
+  const onMessageReceive = (chat: ChatResponseDto) => {
+    setChats((chats) => [...chats, chat]);
+  };
 
   const getAllChats = async (roomId: string) => {
     try {
-      const response = await axiosGet<Chat[]>(
+      const response = await axiosGet<ChatResponseDto[]>(
         `${API_ENDPOINTS.getChatsByRoomId}${roomId}`
       );
       if (response && response.length) {
@@ -45,13 +58,26 @@ function ChatRoom() {
     }
   };
 
+  const onMessageSent = () => {
+    setMessage('');
+    socket?.off('message_sent');
+  };
+
+  const onMessageError = (error: string) => {
+    showErrorToast(error);
+    socket?.off('message_error');
+  };
+
   const sendMessage = () => {
     if (socket && params.roomId) {
-      socket.emit('send_message', {
+      const chatBody: ChatRequestDto = {
         body: message,
         roomId: params.roomId,
-        type: 'text',
-      });
+        type: ChatType.TEXT,
+      };
+      socket.emit('send_message', chatBody);
+      socket.on('message_sent', onMessageSent);
+      socket.on('message_error', onMessageError);
     }
   };
 
@@ -78,14 +104,15 @@ function ChatRoom() {
         <div className='flex w-full items-center space-x-2'>
           <Input
             type='text'
-            placeholder='Type your message'
             className='h-12'
+            value={message}
+            placeholder='Type your message'
             onChange={handleMessageChange}
           />
           <Button
             type='submit'
             onClick={sendMessage}
-            className='h-12 lg:px-10 md:px-8 sm:px-6 xs:px-4'
+            className='h-12 lg:px-10 md:px-8 sm:px-6 xs:px-4 cursor-pointer'
           >
             Send
           </Button>

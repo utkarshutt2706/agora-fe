@@ -1,4 +1,6 @@
-export interface Chat {
+import { ChatType } from '@/enums';
+
+export interface ChatResponseDto {
   _id: string;
   body: string;
   authorId: string;
@@ -6,6 +8,12 @@ export interface Chat {
   roomId: string;
   createdAt: string;
   updatedAt: string;
-  type: string;
+  type: ChatType;
   __v: number;
+}
+
+export interface ChatRequestDto {
+  body: string;
+  roomId: string;
+  type: ChatType;
 }

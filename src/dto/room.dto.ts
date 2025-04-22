@@ -1,10 +1,12 @@
 export interface Room {
-  isPrivate: boolean;
   _id: string;
   name: string;
-  author: string;
+  authorId: string;
+  authorName: string;
   active: boolean;
+  isPrivate: boolean;
   currentOnlineCount: number;
   createdAt: string;
+  updatedAt: string;
   __v: number;
 }
