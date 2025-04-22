@@ -1,7 +1,6 @@
 import { CustomRoute } from '@/interfaces';
 import ChatRoom from '@/pages/ChatRoom';
 import Home from '@/pages/Home';
-import Register from '@/pages/Register';
 
 export const ROUTES = {
   login: '/',
@@ -11,10 +10,6 @@ export const ROUTES = {
 };
 
 export const routes: CustomRoute[] = [
-  {
-    path: '/register',
-    Component: Register,
-  },
   {
     path: '/home',
     Component: Home,

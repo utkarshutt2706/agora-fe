@@ -1,6 +1,7 @@
 import { BaseResponse } from '@/dto';
 import axios from 'axios';
 import { getAuthToken } from './storage';
+import { showErrorToast } from './toast';
 
 const BASE_URL = `${import.meta.env.VITE_BE_URL}${
   import.meta.env.VITE_BE_BASE_URL
@@ -19,6 +20,16 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  }
+);
+
+axiosInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    showErrorToast(error.response.data.error);
     return Promise.reject(error);
   }
 );

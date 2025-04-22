@@ -10,11 +10,11 @@ import {
 import { RegisterRequestDto, RegisterResponseDto } from '@/dto';
 import { axiosPost } from '@/lib/axios';
 import { API_ENDPOINTS } from '@/lib/constants';
+import { showSuccessToast } from '@/lib/toast';
 import { ROUTES } from '@/routes';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import spinner from '../../assets/spinner.svg';
 
 function Register() {
   const navigate = useNavigate();
@@ -30,7 +30,6 @@ function Register() {
   const [registerFormDetails, setRegisterFormDetails] = useState({
     email: '',
     fullName: '',
-    username: '',
     password: '',
     confirmPassword: '',
   });
@@ -81,7 +80,11 @@ function Register() {
           password,
         }
       );
-      if (response && response.userId) {
+      if (response && response.userFullName) {
+        showSuccessToast(
+          response.message ||
+            `Welcome to Agora ${response.userFullName || 'user'}!`
+        );
         handleLoginRedirect();
       }
     } catch (error) {
@@ -205,18 +208,13 @@ function Register() {
 
               <Button
                 type='submit'
+                disabled={isLoading}
                 className={`relative w-full py-2 rounded-lg font-semibold transition min-h-10 ${
                   isLoading ? 'cursor-progress' : 'cursor-pointer'
                 }`}
               >
-                {isLoading ? (
-                  <img
-                    src={spinner}
-                    className='absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2'
-                  />
-                ) : (
-                  'Register'
-                )}
+                {isLoading && <Loader2 className='animate-spin' />}
+                Register
               </Button>
             </form>
           </CardContent>

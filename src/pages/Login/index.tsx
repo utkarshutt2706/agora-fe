@@ -14,10 +14,9 @@ import { API_ENDPOINTS } from '@/lib/constants';
 import { setAuthToken, setUserDetails } from '@/lib/storage';
 import { ROUTES } from '@/routes';
 import { jwtDecode } from 'jwt-decode';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import spinner from '../../assets/spinner.svg';
 
 function Login() {
   const navigate = useNavigate();
@@ -122,17 +121,13 @@ function Login() {
               <div className='flex items-center justify-center'>
                 <Button
                   type='submit'
+                  disabled={isLoading}
                   className={`relative w-full py-2 rounded-lg font-semibold transition min-h-10 ${
                     isLoading ? 'cursor-progress' : 'cursor-pointer'
                   }`}
                 >
-                  {isLoading && (
-                    <img
-                      src={spinner}
-                      className='absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2'
-                    />
-                  )}
-                  {!isLoading && 'Login'}
+                  {isLoading && <Loader2 className='animate-spin' />}
+                  Login
                 </Button>
               </div>
             </form>

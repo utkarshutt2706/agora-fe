@@ -6,5 +6,5 @@ export interface RegisterRequestDto {
 
 export interface RegisterResponseDto {
   message: string;
-  userId: string;
+  userFullName: string;
 }
