@@ -150,7 +150,7 @@ function ChatRoom() {
         style={{ height: 'calc(100svh - 48px)' }}
         className='flex flex-col justify-end px-4 py-4 lg:px-6'
       >
-        <div className='flex flex-col overflow-y-auto'>
+        <div className='flex flex-col overflow-y-auto scroll-hidden'>
           {Object.entries(groupedChats).map(([date, dayChats]) => (
             <div
               className='relative'
