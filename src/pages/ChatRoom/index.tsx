@@ -1,14 +1,31 @@
 import CustomChat from '@/components/custom/CustomChat';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 import { ChatRequestDto, ChatResponseDto } from '@/dto';
 import { ChatType } from '@/enums';
 import useSocket from '@/hooks/useSocket';
 import { axiosGet } from '@/lib/axios';
 import { API_ENDPOINTS } from '@/lib/constants';
 import { showErrorToast } from '@/lib/toast';
+import moment from 'moment';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
+
+type GroupedChats = {
+  [date: string]: ChatResponseDto[];
+};
+
+const groupChatsByDate = (chats: ChatResponseDto[]): GroupedChats => {
+  return chats.reduce((groups: GroupedChats, chat) => {
+    const dateKey = moment(new Date(chat.createdAt)).format(
+      'dddd, DD MMMM YYYY'
+    );
+    if (!groups[dateKey]) groups[dateKey] = [];
+    groups[dateKey].push(chat);
+    return groups;
+  }, {});
+};
 
 function ChatRoom() {
   const params = useParams();
@@ -16,9 +33,12 @@ function ChatRoom() {
   const [isTyping, setIsTyping] = useState(false);
   const [usersTyping, setUsersTyping] = useState<string[]>([]);
   const [chats, setChats] = useState([] as ChatResponseDto[]);
+  const dateRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const socket = useSocket();
+
+  const groupedChats = groupChatsByDate(chats);
 
   useEffect(() => {
     if (params.roomId) getAllChats(params.roomId);
@@ -45,7 +65,6 @@ function ChatRoom() {
   }, [socket, params.roomId]);
 
   const onUserTypingStart = (name: string) => {
-    console.log(name);
     setUsersTyping((prev) => {
       if (!prev.includes(name)) return [...prev, name];
       return prev;
@@ -118,6 +137,13 @@ function ChatRoom() {
     }, 500);
   };
 
+  const scrollToDate = (date: string) => {
+    const element = dateRefs.current[date];
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <>
       <div
@@ -125,10 +151,29 @@ function ChatRoom() {
         className='flex flex-col justify-end px-4 py-4 lg:px-6'
       >
         <div className='flex flex-col overflow-y-auto'>
-          {chats && chats.length
-            ? chats.map((chat) => <CustomChat chat={chat} key={chat._id} />)
-            : null}
-          {/* Invisible anchor to scroll to */}
+          {Object.entries(groupedChats).map(([date, dayChats]) => (
+            <div
+              className='relative'
+              key={date}
+              ref={(el) => {
+                dateRefs.current[date] = el;
+              }}
+            >
+              <div
+                className='sticky top-0 z-10 bg-white flex items-center gap-4 px-1 pb-4 mb-4'
+                onClick={() => scrollToDate(date)}
+              >
+                <Separator className='flex-1' />
+                <span className='px-4 py-1 rounded-full border border-gray-300 text-center text-sm font-medium text-muted-foreground whitespace-nowrap underline hover:text-foreground hover:bg-muted cursor-pointer'>
+                  {date}
+                </span>
+                <Separator className='flex-1' />
+              </div>
+              {dayChats.map((chat) => (
+                <CustomChat chat={chat} key={chat._id} />
+              ))}
+            </div>
+          ))}
           <div ref={bottomRef} />
         </div>
         <form
