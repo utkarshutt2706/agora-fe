@@ -7,21 +7,24 @@ import {
 import AuthContext from '@/contexts/AuthContext';
 import { ChatResponseDto } from '@/dto';
 import { useContext } from 'react';
+import UserAvatar from '../UserAvatar';
 
 function CustomChat({ chat }: { chat: ChatResponseDto }) {
   const authData = useContext(AuthContext);
+  const isOwnMessage = authData?.user._id === chat.authorId;
   return (
     <>
       <div
         key={chat._id}
-        className={`flex ${
-          authData?.user._id === chat.authorId ? 'justify-end' : 'justify-start'
+        className={`mb-8 flex items-center ${
+          isOwnMessage ? 'flex-row-reverse' : 'flex-row'
         }`}
       >
+        <UserAvatar userName={chat.authorName} />
         <Card
           key={chat._id}
-          className={`w-[250px] lg:w-6/10 md:w-[500px] sm:w-[350px] mb-8 ${
-            chat.authorId === authData?.user._id ? 'bg-neutral-200' : ''
+          className={`w-[250px] lg:w-6/10 md:w-[500px] sm:w-[350px] ${
+            isOwnMessage ? 'bg-neutral-200 mr-4' : 'ml-4'
           }`}
         >
           <CardHeader>

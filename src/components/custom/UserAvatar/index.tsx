@@ -15,6 +15,7 @@ function UserAvatar({ userName }: { userName: string }) {
     const words = name.trim().split(/\s+/);
     if (words.length === 1) {
       setInitials(words[0][0].toUpperCase());
+      return;
     }
 
     setInitials(
@@ -24,8 +25,8 @@ function UserAvatar({ userName }: { userName: string }) {
 
   return (
     <>
-      <Avatar className='h-8 w-8 rounded-lg grayscale'>
-        <AvatarFallback className='rounded-lg'>{initials}</AvatarFallback>
+      <Avatar className='h-12 w-12 rounded-full grayscale'>
+        <AvatarFallback className='rounded-full'>{initials}</AvatarFallback>
       </Avatar>
     </>
   );

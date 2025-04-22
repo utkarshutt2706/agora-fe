@@ -1,13 +1,13 @@
 import CustomChat from '@/components/custom/CustomChat';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import SocketContext from '@/contexts/SocketContext';
 import { ChatRequestDto, ChatResponseDto } from '@/dto';
 import { ChatType } from '@/enums';
+import useSocket from '@/hooks/useSocket';
 import { axiosGet } from '@/lib/axios';
 import { API_ENDPOINTS } from '@/lib/constants';
 import { showErrorToast } from '@/lib/toast';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 function ChatRoom() {
@@ -15,7 +15,7 @@ function ChatRoom() {
   const [message, setMessage] = useState('');
   const [chats, setChats] = useState([] as ChatResponseDto[]);
   const bottomRef = useRef<HTMLDivElement | null>(null);
-  const socket = useContext(SocketContext);
+  const socket = useSocket();
 
   useEffect(() => {
     if (params.roomId) getAllChats(params.roomId);
