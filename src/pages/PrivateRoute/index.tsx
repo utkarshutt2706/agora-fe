@@ -1,9 +1,9 @@
 import AuthContext from '@/contexts/AuthContext';
-import { UserWithToken } from '@/interfaces';
+import { CustomRoute, UserWithToken } from '@/interfaces';
 import { getAuthToken, getUserDetails } from '@/lib/storage';
+import { ROUTES, routes } from '@/routes';
 import { JSX, useEffect, useState } from 'react';
 import { Route, Routes, useNavigate } from 'react-router-dom';
-import { CustomRoute, ROUTES, routes } from '../../routes/index';
 
 const renderRoute = (routes: CustomRoute[]): JSX.Element[] => {
   return routes.map((route): JSX.Element => {

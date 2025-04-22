@@ -1,7 +1,7 @@
+import { CustomRoute } from '@/interfaces';
 import ChatRoom from '@/pages/ChatRoom';
 import Home from '@/pages/Home';
 import Register from '@/pages/Register';
-import { JSX } from 'react';
 
 export const ROUTES = {
   login: '/',
@@ -10,7 +10,7 @@ export const ROUTES = {
   chatRoom: '/home/chat/',
 };
 
-export const routes = [
+export const routes: CustomRoute[] = [
   {
     path: '/register',
     Component: Register,
@@ -26,9 +26,3 @@ export const routes = [
     ],
   },
 ];
-
-export interface CustomRoute {
-  path: string;
-  Component: () => JSX.Element;
-  children?: CustomRoute[];
-}

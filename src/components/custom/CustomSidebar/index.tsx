@@ -17,7 +17,7 @@ import {
   MessageCircleMore,
   MoreVerticalIcon,
 } from 'lucide-react';
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import UserAvatar from '../UserAvatar';
 
@@ -30,19 +30,9 @@ function CustomSidebar({
 }) {
   const params = useParams();
   const authData = useContext(AuthContext);
-  const [selectedRoom, setSelectedRoom] = useState(null as Room | null);
-
-  useEffect(() => {
-    if (params.roomId && rooms && rooms.length) {
-      const currentRoom = rooms.find((room) => room._id === params.roomId);
-      if (currentRoom) {
-        setSelectedRoom(currentRoom);
-      }
-    }
-  }, [rooms, params.roomId]);
+  const selectedRoom = rooms.find((room) => room._id === params.roomId);
 
   const selectRoomHandler = (room: Room) => {
-    setSelectedRoom(room);
     handleSelectRoom(room);
   };
 
