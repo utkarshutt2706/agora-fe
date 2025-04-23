@@ -1,6 +1,6 @@
+import ChatForm from '@/components/custom/ChatForm';
 import CustomChat from '@/components/custom/CustomChat';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { ChatRequestDto, ChatResponseDto } from '@/dto';
 import { ChatType } from '@/enums';
@@ -29,13 +29,13 @@ const groupChatsByDate = (chats: ChatResponseDto[]): GroupedChats => {
 };
 
 function ChatRoom() {
-  const params = useParams();
-  const [message, setMessage] = useState('');
   const isTyping = useRef(false);
-  const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+  const params = useParams<{ roomId: string }>();
+  const [chats, setChats] = useState<ChatResponseDto[]>([]);
   const [usersTyping, setUsersTyping] = useState<string[]>([]);
-  const [chats, setChats] = useState([] as ChatResponseDto[]);
-  const [failedChats, setFailedChats] = useState([] as ChatRequestDto[]);
+  const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+  // const showScrollToBottom = useRef(false);
+  const [failedChats, setFailedChats] = useState<ChatRequestDto[]>([]);
   const dateRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -124,9 +124,11 @@ function ChatRoom() {
     socket?.off('message_sent');
   };
 
-  const sendMessage = (e: React.FormEvent<HTMLFormElement>) => {
+  const sendMessage = (
+    e: React.FormEvent<HTMLFormElement>,
+    message: string
+  ) => {
     e.preventDefault();
-    setMessage('');
     if (params.roomId) {
       const chat: ChatRequestDto = {
         body: message,
@@ -145,10 +147,7 @@ function ChatRoom() {
     }
   };
 
-  const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value;
-    setMessage(input);
-
+  const handleMessageChange = () => {
     if (!socket || !params.roomId) return;
 
     if (!isTyping.current) {
@@ -182,7 +181,7 @@ function ChatRoom() {
     if (!chatContainerRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
     const isNearBottom = scrollHeight - scrollTop - clientHeight < 200;
-    setShowScrollToBottom(!isNearBottom);
+    setShowScrollToBottom(isNearBottom);
   };
 
   return (
@@ -242,31 +241,12 @@ function ChatRoom() {
             ↓ Scroll to bottom
           </Button>
         )}
-        <form
-          className='relative flex w-full items-center space-x-2'
-          onSubmit={sendMessage}
-        >
-          {usersTyping.length > 0 && (
-            <div className='absolute text-sm text-muted-foreground px-2 pb-2 top-[-20px]'>
-              {usersTyping.join(', ')} {usersTyping.length === 1 ? 'is' : 'are'}{' '}
-              typing...
-            </div>
-          )}
-          <Input
-            type='text'
-            className='h-12'
-            value={message}
-            placeholder='Type your message'
-            onChange={handleMessageChange}
-          />
-          <Button
-            type='submit'
-            disabled={message === ''}
-            className='h-12 lg:px-10 md:px-8 sm:px-6 xs:px-4 cursor-pointer'
-          >
-            Send
-          </Button>
-        </form>
+        <ChatForm
+          key={params.roomId}
+          usersTyping={usersTyping}
+          sendMessage={sendMessage}
+          handleMessageChange={handleMessageChange}
+        ></ChatForm>
       </div>
     </>
   );

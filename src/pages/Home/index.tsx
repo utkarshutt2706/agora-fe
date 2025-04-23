@@ -11,11 +11,11 @@ import { useEffect, useState } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 
 function Home() {
-  const navigate = useNavigate();
   const params = useParams();
-  const [rooms, setRooms] = useState([] as Room[]);
+  const navigate = useNavigate();
+  const [rooms, setRooms] = useState<Room[]>([]);
   const [isConnected, setIsConnected] = useState(false);
-  const [selectedRoom, setSelectedRoom] = useState(null as Room | null);
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 
   const socket = useSocket();
 

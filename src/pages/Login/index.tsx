@@ -22,10 +22,10 @@ function Login() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [loginFormDetails, setLoginFormDetails] = useState({
+  const [loginFormDetails, setLoginFormDetails] = useState<LoginRequestDto>({
     email: '',
     password: '',
-  } as LoginRequestDto);
+  });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoginFormDetails({
