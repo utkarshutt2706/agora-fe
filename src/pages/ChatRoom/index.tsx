@@ -8,6 +8,7 @@ import useSocket from '@/hooks/useSocket';
 import { axiosGet } from '@/lib/axios';
 import { API_ENDPOINTS } from '@/lib/constants';
 import { showErrorToast } from '@/lib/toast';
+import { RotateCcw } from 'lucide-react';
 import moment from 'moment';
 import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -33,6 +34,7 @@ function ChatRoom() {
   const [isTyping, setIsTyping] = useState(false);
   const [usersTyping, setUsersTyping] = useState<string[]>([]);
   const [chats, setChats] = useState([] as ChatResponseDto[]);
+  const [failedChats, setFailedChats] = useState([] as ChatRequestDto[]);
   const dateRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -47,7 +49,7 @@ function ChatRoom() {
   useEffect(() => {
     // Scroll to bottom when messages change
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [chats]);
+  }, [chats, failedChats]);
 
   useEffect(() => {
     if (socket && params.roomId) {
@@ -99,26 +101,39 @@ function ChatRoom() {
   };
 
   const onMessageSent = () => {
-    setMessage('');
     socket?.off('message_sent');
     socket?.off('message_error');
   };
 
-  const onMessageError = ({ message }: { message: string }) => {
-    showErrorToast(message);
+  const onMessageError = ({
+    error,
+    chat,
+  }: {
+    error: string;
+    chat: ChatRequestDto;
+  }) => {
+    showErrorToast(error);
+    setFailedChats((prev) => [...prev, chat]);
     socket?.off('message_error');
     socket?.off('message_sent');
   };
 
   const sendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (socket && params.roomId) {
-      const chatBody: ChatRequestDto = {
+    setMessage('');
+    if (params.roomId) {
+      const chat: ChatRequestDto = {
         body: message,
         roomId: params.roomId,
         type: ChatType.TEXT,
       };
-      socket.emit('send_message', chatBody);
+      sendMessageToSocket(chat);
+    }
+  };
+
+  const sendMessageToSocket = (chat: ChatRequestDto) => {
+    if (socket) {
+      socket.emit('send_message', chat);
       socket.on('message_sent', onMessageSent);
       socket.on('message_error', onMessageError);
     }
@@ -147,6 +162,13 @@ function ChatRoom() {
     const element = dateRefs.current[date];
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const retryMessage = (chat: ChatRequestDto) => {
+    if (socket && params.roomId) {
+      sendMessageToSocket(chat);
+      setFailedChats((prev) => prev.filter((c) => c !== chat));
     }
   };
 
@@ -180,6 +202,19 @@ function ChatRoom() {
               ))}
             </div>
           ))}
+          {failedChats.map((chat, index) => (
+            <div
+              key={`failed-${index}`}
+              className='relative max-w-xs self-end bg-red-100 text-red-800 border border-red-400 px-3 py-2 rounded-lg my-2 mr-[64px]'
+            >
+              <RotateCcw
+                className='absolute top-0 right-[-32px] cursor-pointer'
+                onClick={() => retryMessage(chat)}
+              />
+              <div className='text-sm'>{chat.body}</div>
+              <div className='text-xs italic mt-1'>Failed to send</div>
+            </div>
+          ))}
           <div ref={bottomRef} />
         </div>
         <form
@@ -201,6 +236,7 @@ function ChatRoom() {
           />
           <Button
             type='submit'
+            disabled={message === ''}
             className='h-12 lg:px-10 md:px-8 sm:px-6 xs:px-4 cursor-pointer'
           >
             Send
