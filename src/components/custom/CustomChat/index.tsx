@@ -33,7 +33,7 @@ function CustomChat({ chat }: { chat: ChatResponseDto }) {
         >
           <CardHeader>
             <CardTitle>{chat.authorName}</CardTitle>
-            <CardDescription>{chat.body}</CardDescription>
+            <CardDescription className='break-all'>{chat.body}</CardDescription>
           </CardHeader>
           <span className='absolute bottom-[10px] right-[10px] text-muted-foreground text-sm'>
             {isChatModified

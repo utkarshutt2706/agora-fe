@@ -31,11 +31,13 @@ const groupChatsByDate = (chats: ChatResponseDto[]): GroupedChats => {
 function ChatRoom() {
   const params = useParams();
   const [message, setMessage] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
+  const isTyping = useRef(false);
+  const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const [usersTyping, setUsersTyping] = useState<string[]>([]);
   const [chats, setChats] = useState([] as ChatResponseDto[]);
   const [failedChats, setFailedChats] = useState([] as ChatRequestDto[]);
   const dateRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const socket = useSocket();
@@ -48,8 +50,12 @@ function ChatRoom() {
 
   useEffect(() => {
     // Scroll to bottom when messages change
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    scrollToBottom();
   }, [chats, failedChats]);
+
+  const scrollToBottom = () => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   useEffect(() => {
     if (socket && params.roomId) {
@@ -145,7 +151,7 @@ function ChatRoom() {
 
     if (!socket || !params.roomId) return;
 
-    if (!isTyping) {
+    if (!isTyping.current) {
       socket.emit('typing_start', params.roomId);
     }
     if (typingTimeoutRef.current) {
@@ -153,7 +159,7 @@ function ChatRoom() {
     }
 
     typingTimeoutRef.current = setTimeout(() => {
-      setIsTyping(false);
+      isTyping.current = false;
       socket.emit('typing_end', params.roomId);
     }, 500);
   };
@@ -172,13 +178,24 @@ function ChatRoom() {
     }
   };
 
+  const onScroll = () => {
+    if (!chatContainerRef.current) return;
+    const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+    const isNearBottom = scrollHeight - scrollTop - clientHeight < 200;
+    setShowScrollToBottom(!isNearBottom);
+  };
+
   return (
     <>
       <div
         style={{ height: 'calc(100svh - 48px)' }}
         className='flex flex-col justify-end px-4 py-4 lg:px-6'
       >
-        <div className='flex flex-col overflow-y-auto scroll-hidden'>
+        <div
+          className='flex flex-col overflow-y-auto scroll-hidden'
+          ref={chatContainerRef}
+          onScroll={onScroll}
+        >
           {Object.entries(groupedChats).map(([date, dayChats]) => (
             <div
               className='relative'
@@ -217,6 +234,14 @@ function ChatRoom() {
           ))}
           <div ref={bottomRef} />
         </div>
+        {showScrollToBottom && (
+          <Button
+            className='fixed bottom-24 right-4 z-50 shadow-md'
+            onClick={scrollToBottom}
+          >
+            ↓ Scroll to bottom
+          </Button>
+        )}
         <form
           className='relative flex w-full items-center space-x-2'
           onSubmit={sendMessage}
