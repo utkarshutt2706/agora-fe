@@ -19,11 +19,8 @@ const useSocket = () => {
     }
 
     socketRef.current = socket;
-
-    return () => {
-      socket?.disconnect();
-    };
   }, []);
+
   return socketRef.current;
 };
 

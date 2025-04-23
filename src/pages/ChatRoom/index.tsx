@@ -56,13 +56,17 @@ function ChatRoom() {
       socket.on('user_typing_start', onUserTypingStart);
       socket.on('user_typing_end', onUserTypingEnd);
     }
+  }, [socket, params.roomId]);
+
+  useEffect(() => {
     return () => {
       if (socket && params.roomId) {
         socket.off();
         socket.emit('leave_room', params.roomId);
       }
     };
-  }, [socket, params.roomId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onUserTypingStart = (name: string) => {
     setUsersTyping((prev) => {
@@ -97,11 +101,13 @@ function ChatRoom() {
   const onMessageSent = () => {
     setMessage('');
     socket?.off('message_sent');
+    socket?.off('message_error');
   };
 
-  const onMessageError = (error: string) => {
-    showErrorToast(error);
+  const onMessageError = ({ message }: { message: string }) => {
+    showErrorToast(message);
     socket?.off('message_error');
+    socket?.off('message_sent');
   };
 
   const sendMessage = (e: React.FormEvent<HTMLFormElement>) => {

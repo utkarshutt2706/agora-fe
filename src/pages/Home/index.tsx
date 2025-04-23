@@ -46,6 +46,11 @@ function Home() {
     });
   }, [socket]);
 
+  useEffect(() => {
+    if (socket) socket.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const getAllRooms = async () => {
     try {
       const response = await axiosGet<Room[]>(`${API_ENDPOINTS.getAllRooms}`);
