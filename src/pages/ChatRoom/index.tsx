@@ -106,7 +106,8 @@ function ChatRoom() {
     }
   };
 
-  const onMessageSent = () => {
+  const onMessageSent = (chat: ChatResponseDto) => {
+    onMessageReceive(chat);
     socket?.off('message_sent');
     socket?.off('message_error');
   };
