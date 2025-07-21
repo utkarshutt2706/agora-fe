@@ -97,7 +97,7 @@ function Register() {
   return (
     <>
       <div className='min-h-screen w-full bg-gray-200 flex items-center justify-center'>
-        <Card>
+        <Card className='w-[350px]'>
           <CardHeader>
             <CardTitle>Create Account 🚀</CardTitle>
             <CardDescription>
