@@ -181,7 +181,7 @@ function ChatRoom() {
     if (!chatContainerRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
     const isNearBottom = scrollHeight - scrollTop - clientHeight < 200;
-    setShowScrollToBottom(isNearBottom);
+    setShowScrollToBottom(!isNearBottom);
   };
 
   return (
